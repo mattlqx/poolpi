@@ -1,0 +1,2 @@
+pytz==2016.10
+solartime==0.1b0
