@@ -35,7 +35,7 @@ Weather station is an identifier from wunderground.com.
 
 ### RRD
 
-Create an rrd at `temperature.rrd` with the `tools/create_rrd.sh` script.
+Create an rrd at `temperature.rrd` with the `tools/create_rrd.py` script.
 
 ### Cron
 
