@@ -7,9 +7,10 @@ from solartime import SolarTime
 from location import longitude, latitude, localtz
 
 import json
+import sys
 
-today = date.today()
-solar_utc = SolarTime().sun_utc(date.today(), latitude, longitude)
+target_day = date.fromtimestamp(float(sys.argv[1])) if len(sys.argv) > 1 else date.today()
+solar_utc = SolarTime().sun_utc(target_day, latitude, longitude)
 daylight = solar_utc['sunset'] - solar_utc['sunrise']
 
 solar_local = {
