@@ -5,30 +5,40 @@
 
 import sys
 
-temperature_probe_serial = '28-011620f667ee'
-device = "/sys/bus/w1/devices/{serial}/w1_slave".format(serial=temperature_probe_serial)
-do_cpu = False
+class TemperatureProbe:
+    temp_probe_serial = '28-011620f667ee'
+    cpu_device = '/sys/class/thermal/thermal_zone0/temp'
+    probe_device = '/sys/bus/w1/devices/{serial}/w1_slave'.format(serial=temp_probe_serial)
 
-if len(sys.argv) > 1 and sys.argv[1] == 'cpu':
-    do_cpu = True
-    device = "/sys/class/thermal/thermal_zone0/temp"
+    def __init__(self, device=probe_device):
+        self.device = device
 
-# Open temperature probe device
-with open(device) as tfile:
-    text = tfile.read()
+        # Open temperature probe device
+        with open(self.device) as tfile:
+            text = tfile.read()
 
-# Parse the data
-if do_cpu:
-    temperaturedata = text
-else:
-    secondline = text.split("\n")[1]
-    # The first two characters are "t="
-    temperaturedata = secondline.split(" ")[9][2:]
+        # Parse the data
+        if self.device == self.cpu_device:
+            temperature_data = text
+        else:
+            secondline = text.split('\n')[1]
+            # The first two characters are "t="
+            temperature_data = secondline.split(' ')[9][2:]
+        self.temperature_data = temperature_data
 
-temperature = float(temperaturedata) / 1000
+    def fahrenheit(self):
+        temperature = float(self.temperature_data) / 1000
+        return temperature * 9 / 5 + 32
 
-# celsius
-#print temperature
+    def celsius(self):
+        return float(self.temperature_data) / 1000
 
-# fahrenheit
-print temperature * 9 / 5 + 32
+    def __str__(self):
+        return '{0:.2f} degrees F'.format(self.fahrenheit())
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'cpu':
+        probe = TemperatureProbe(device=TemperatureProbe.cpu_device)
+    else:
+        probe = TemperatureProbe()
+    print probe
