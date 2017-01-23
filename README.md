@@ -2,6 +2,12 @@
 # poolpi
 A collection of scripts that I'm using to monitor my pool's temperature.
 
+## Prerequisites
+
+`rrdtool` - I'm just shelling out to rrdtool for now to do the actual data store work.
+python 2.7 - Most of the scripts are Python.
+php 5.x - The web frontend is hastily written in PHP. You'll need apache or another web server too.
+
 ## Config
 ### `location.py`
 
