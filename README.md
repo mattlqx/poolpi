@@ -18,3 +18,10 @@ weather_station = 'KNYNEWYO256'
 ```
 
 Weather station is an identifier from wunderground.com.
+
+### Cron
+
+Just add a crontab to take the temperature every minute and store it in rrd:
+```
+* * * * *   poolpi/update_rrd.py
+```
