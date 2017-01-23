@@ -14,4 +14,7 @@ from pytz import timezone
 longitude = -5;
 latitude = 22;
 localtz = timezone('UTC')
+weather_station = 'KNYNEWYO256'
 ```
+
+Weather station is an identifier from wunderground.com.
