@@ -1,6 +1,5 @@
 
 # poolpi
-========
 A collection of scripts that I'm using to monitor my pool's temperature.
 
 ## Config
