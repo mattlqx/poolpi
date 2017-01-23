@@ -1,6 +1,6 @@
 
 # poolpi
-A collection of scripts that I'm using to monitor my pool's temperature.
+A collection of scripts that I'm using to monitor my pool's temperature via a Raspberry Pi and a 1-wire temperature probe. Specifically, a DS18B20 waterproof probe wired to a Pi-EzConnect GPIO hat.
 
 ## Prerequisites
 
