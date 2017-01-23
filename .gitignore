@@ -2,3 +2,4 @@
 location.*
 .watchmanconfig
 *.rrd
+weather.xml
