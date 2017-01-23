@@ -1,4 +1,4 @@
 *.pyc
-location.py
+location.*
 .watchmanconfig
 *.rrd
