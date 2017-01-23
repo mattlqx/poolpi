@@ -6,6 +6,13 @@ A collection of scripts that I'm using to monitor my pool's temperature via a Ra
 
 * `rrdtool` - I'm just shelling out to rrdtool for now to do the actual data store work.
 * python 2.7 - Most of the scripts are Python.
+* OS packages for Raspian/Debian, in order to compile the pypi `python-rrdtool` module:
+  * `libpango1.0-dev`
+  * `libxml2-dev`
+  * `libcairo2-dev`
+  * `libglib2.0-dev`
+  * `python-dev`
+  * `librrd-dev`
 * python modules - Run `pip install -r requirements.txt`
 * php 5.x - The web frontend is hastily written in PHP. You'll need apache or another web server too.
 

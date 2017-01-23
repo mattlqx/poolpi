@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import xml.etree.ElementTree as ET
 import os
 import urllib2
-import subprocess
+import rrdtool
 
 # Pull weather station data every 5 minutes and get cached value
 use_cache = False
@@ -37,9 +37,12 @@ if temp_f != 0 and not use_cache:
         f.write(weather_data)
 
 # Update rrd with weather station and temperature probe data
-cmd = 'rrdtool update {rrd_dir}/temperature.rrd -t probe:outdoor N:{probe_temp}:{outside_temp}'.format(
-    rrd_dir=os.path.dirname(__file__),
-    probe_temp=TemperatureProbe().fahrenheit(),
-    outside_temp=temp_f)
-print cmd
-subprocess.call(cmd.split(' '))
+args = [
+    '{rrd_dir}/temperature.rrd'.format(rrd_dir=os.path.dirname(__file__)),
+    '-t', 'probe:outdoor',
+    'N:{probe_temp}:{outside_temp}'.format(
+        probe_temp=TemperatureProbe().fahrenheit(),
+        outside_temp=temp_f)
+]
+print 'rrdtool update {args}'.format(args=' '.join(args))
+rrdtool.update(*args)
