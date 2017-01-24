@@ -27,7 +27,7 @@ class TemperatureProbe:
         self.temperature_data = temperature_data
 
     def fahrenheit(self):
-        return self.celsius * 9 / 5 + 32
+        return self.celsius() * 9 / 5 + 32
 
     def celsius(self):
         return float(self.temperature_data) / 1000
