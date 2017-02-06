@@ -8,6 +8,7 @@ chdir(realpath(dirname(__FILE__).'/..'));
 
 // Define range via query string
 $lookback = isset($_GET['lookback']) && is_numeric($_GET['lookback']) ? min($_GET['lookback'], 29030400) : 604800;
+$start = isset($_GET['start']) && is_numeric($_GET['start']) ? max(time() - (60 * 60 * 24 * 365), $_GET['start']) : time();
 $probe_only = isset($_GET['probe_only']);
 $show_cmd = isset($_GET['show_cmd']);
 
@@ -35,7 +36,7 @@ if ($lookback <= 3600000) {
 
 // Graphing
 $tmpfile = tempnam("/tmp", "pooltemp");
-$rrd_graph = "rrdtool graph $tmpfile -w 785 -h 240 -a PNG --slope-mode --start -$lookback --end now --vertical-label \"temperature (°F)\" \
+$rrd_graph = "rrdtool graph $tmpfile -w 785 -h 240 -a PNG --slope-mode --start -$lookback --end $start --vertical-label \"temperature (°F)\" \
   DEF:temp=temperature.rrd:probe:AVERAGE LINE2:temp#0000ff:\"probe\" \
   VDEF:probemax=temp,MAXIMUM \
   GPRINT:probemax:\"  Max\:  %5.2lf°F\" \
@@ -66,6 +67,7 @@ header('Content-Type: image/png');
 exec($rrd_graph);
 header('Content-Length: ' . filesize($tmpfile));
 header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 60));
+header('Access-Control-Allow-Origin: http://ask-ifr-download.s3.amazonaws.com');
 
 readfile($tmpfile);
 unlink($tmpfile);
