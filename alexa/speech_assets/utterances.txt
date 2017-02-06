@@ -1,0 +1,5 @@
+GetPoolWeather what is the temperature
+GetPoolWeather how is it
+GetPoolWeather how is the water
+GetPoolWeather check the temperature
+GetPoolWeather can i jump in
