@@ -29,6 +29,7 @@ longitude = -5;
 latitude = 22;
 localtz = timezone('UTC')
 weather_station = 'KNYNEWYO256'
+webpath = 'https://mywebserver.com/poolpi'
 ```
 
 Weather station is an identifier from wunderground.com.
@@ -50,3 +51,10 @@ Symlink or document root the `web` directory. Then you can access `temps.php` fo
 hourly, daily, weekly and yearly graphs. One graph for each time period will have ambient and probe
 temperature overlaid and another graph will have just the probe temperature so it's easier to see
 its fluctuation without the scale of the ambient temperature zooming out the graph.
+
+### Alexa
+
+The Alexa Skill is in the `alexa` directory. Run the `build_lambda_zip.sh` script to install python
+dependencies within the directory and zip it up. You can then place that zip in a Lambda function and
+configure an Alexa Skill to use its ARN. The `location.py` config is copied into the zip for configuration
+of the timezone and location of the web server that is hosting the `web` contents.
