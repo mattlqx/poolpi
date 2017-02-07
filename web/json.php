@@ -17,8 +17,9 @@ exec("rrdtool fetch temperature.rrd -s -86400 -e -60 AVERAGE", $last_day);
 
 foreach ($last_day as $line) {
   if (preg_match("/(\d+): (\d+\.\d+e\+01) (\d+\.\d+e\+01)/", $line, $matches)) {
-    if ($matches[2] > $data['peak_temp_f']) {
-      $data['peak_temp_f'] = (float)sprintf("%0.02f", $matches[2]);
+    $rounded_probe_f = (float)sprintf("%0.02f", $matches[2]);
+    if ($rounded_probe_f > $data['peak_temp_f']) {
+      $data['peak_temp_f'] = $rounded_probe_f;
       $data['peak_temp_time'] = (int)$matches[1];
     }
   }
