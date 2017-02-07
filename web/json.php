@@ -13,7 +13,9 @@ $data['outdoor_temp_f'] = (float)sprintf("%0.02f", $outdoor_temp);
 $data['peak_temp_f'] = null;
 $data['peak_temp_time'] = null;
 
-exec("rrdtool fetch temperature.rrd -s -86400 -e -60 AVERAGE", $last_day);
+$midnight = time() - (time() % 86400);
+
+exec("rrdtool fetch temperature.rrd -s ".($midnight - 86400)." -e $midnight AVERAGE", $last_day);
 
 foreach ($last_day as $line) {
   if (preg_match("/(\d+): (\d+\.\d+e\+01) (\d+\.\d+e\+01)/", $line, $matches)) {
