@@ -10,10 +10,11 @@ list($ts, $probe_temp, $outdoor_temp) = explode(' ', exec("rrdtool fetch tempera
 
 $data['probe_temp_f'] = (float)sprintf("%0.02f", $probe_temp);
 $data['outdoor_temp_f'] = (float)sprintf("%0.02f", $outdoor_temp);
-$data['peak_temp_f'] = null;
+$data['peak_temp_f'] = 0;
 $data['peak_temp_time'] = null;
 
-$midnight = time() - (time() % 86400);
+$midnight = time() - ((time() + date('Z', time())) % 86400);
+$data['midnight'] = $midnight;
 
 exec("rrdtool fetch temperature.rrd -s ".($midnight - 86400)." -e $midnight AVERAGE", $last_day);
 
