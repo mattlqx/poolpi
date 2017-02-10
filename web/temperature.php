@@ -4,6 +4,13 @@ function get_sun_data($datestamp) {
   return json_decode(exec("./sunrise.py $datestamp"));
 }
 
+// Bail if etag matches (of same minute)
+$etag = md5(time() - time() % 60);
+if (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
+  header("HTTP/1.1 304 Not Modified");
+  exit;
+}
+
 chdir(realpath(dirname(__FILE__).'/..'));
 
 // Define range via query string
@@ -65,8 +72,9 @@ if ($show_cmd) {
 header('Content-Type: image/png');
 
 exec($rrd_graph);
+
+header('Etag: ' . $etag);
 header('Content-Length: ' . filesize($tmpfile));
-header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 60));
 header('Access-Control-Allow-Origin: http://ask-ifr-download.s3.amazonaws.com');
 
 readfile($tmpfile);
