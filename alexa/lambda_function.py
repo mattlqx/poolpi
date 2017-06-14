@@ -57,17 +57,19 @@ def adjective_for_temp(temp_f):
         adj = 'icy'
     elif temp_f <= 65:
         adj = 'frigid'
-    elif temp_f <= 68:
+    elif temp_f <= 70:
         adj = 'chilly'
-    elif temp_f <= 71:
+    elif temp_f <= 74:
+        adj = 'cold'
+    elif temp_f <= 78:
         adj = 'cool'
-    elif temp_f <= 75:
+    elif temp_f <= 81:
         adj = 'pleasant'
-    elif temp_f <= 80:
+    elif temp_f <= 83:
         adj = 'perfect'
-    elif temp_f <= 82:
-        adj = 'warm'
     elif temp_f <= 85:
+        adj = 'warm'
+    elif temp_f <= 90:
         adj = 'hot'
     else:
         adj = 'swampy'
