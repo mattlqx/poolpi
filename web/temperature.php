@@ -43,14 +43,7 @@ if ($lookback <= 3600000) {
 
 // Graphing
 $tmpfile = tempnam("/tmp", "pooltemp");
-$rrd_graph = "rrdtool graph $tmpfile -w 785 -h 240 -a PNG --slope-mode --start -$lookback --end $start --vertical-label \"temperature (°F)\" \
-  DEF:temp=temperature.rrd:probe:AVERAGE LINE2:temp#0000ff:\"probe\" \
-  VDEF:probemax=temp,MAXIMUM \
-  GPRINT:probemax:\"  Max\:  %5.2lf°F\" \
-  VDEF:probemin=temp,MINIMUM \
-  GPRINT:probemin:\"Min\:  %5.2lf°F\" \
-  VDEF:probecur=temp,LAST \
-  GPRINT:probecur:\"Cur\:  %5.2lf°F\l\" \\\n";
+$rrd_graph = "rrdtool graph $tmpfile -w 785 -h 240 -a PNG --slope-mode --start -$lookback --end $start --vertical-label \"temperature (°F)\" ";
 if (!$probe_only) {
   $rrd_graph .= "  DEF:temp2=temperature.rrd:outdoor:AVERAGE LINE2:temp2#ff0000:\"outside\" \
   VDEF:outsidemax=temp2,MAXIMUM \
@@ -61,6 +54,13 @@ if (!$probe_only) {
   GPRINT:outsidecur:\"Cur\:  %5.2lf°F\l\" \
 \\\n";
 }
+$rrd_graph .= "  DEF:temp=temperature.rrd:probe:AVERAGE LINE2:temp#0000ff:\"probe\" \
+  VDEF:probemax=temp,MAXIMUM \
+  GPRINT:probemax:\"  Max\:  %5.2lf°F\" \
+  VDEF:probemin=temp,MINIMUM \
+  GPRINT:probemin:\"Min\:  %5.2lf°F\" \
+  VDEF:probecur=temp,LAST \
+  GPRINT:probecur:\"Cur\:  %5.2lf°F\l\" \\\n";
 $rrd_graph .= implode(" \\\n  ", $vrules);
 
 if ($show_cmd) {
