@@ -1,2 +1,2 @@
-pytz==2016.10
+pytz==2019.01
 solartime==0.1b0
