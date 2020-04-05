@@ -30,15 +30,20 @@ longitude = -5;
 latitude = 22;
 localtz = timezone('UTC')
 webpath = 'https://mywebserver.com/poolpi'
+color_start = 0xff0000
+color_offset = 12
 temperature_probes = collections.OrderedDict()
-temperature_probes['probe'] = '28-011620f667ee'
 temperature_probes['outdoor'] = '28-011620f667ff'
+temperature_probes['probe'] = '28-011620f667ee'
 ```
 
 **NOTE**: Weather Underground has shutdown. As a result, I've removed outdoor temperature scraping. Instead of
 having to deal with an external service, I've decided to just go with another temperature probe. So I've added
 that to the config above. It's an ordered dictionary with the key being the name of the rrd gauge and value being
 the serial number of the probe. The ordering is important for exporting the structure between Python and PHP.
+
+`color_start` and `color_offset` are used to override the stock colors. The first gauge starts at red and then
+each gauge after that shifts 12 bits.
 
 ### RRD
 

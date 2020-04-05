@@ -49,14 +49,18 @@ if ($lookback <= 3600000) {
 $config = get_config();
 $tmpfile = tempnam("/tmp", "pooltemp");
 $rrd_graph = "rrdtool graph $tmpfile -w 785 -h 240 -a PNG --slope-mode --start -$lookback --end $start --vertical-label \"temperature (°F)\" ";
-$color = 0xff;
+$rrd_defs = [];
+$color = array_key_exists('color_start', $config) == true ? $config['color_start'] : 0xff0000;
 foreach ($config['temperature_probes'] as $probe_data) {
   $probe = array_keys($probe_data)[0];
+  $color_string = sprintf("%06x", $color);
+  $color = abs($color >> (array_key_exists('color_offset', $config) == true ? $config['color_offset'] : 12));
+
   if ($probe_only && $probe != 'probe') {
     continue;
   }
-  $color_string = sprintf("%06x", $color);
-  $rrd_graph .= "  DEF:$probe=temperature.rrd:$probe:AVERAGE LINE2:$probe#{$color_string}:\"$probe\" \
+
+  $rrd_defs[] = "  DEF:$probe=temperature.rrd:$probe:AVERAGE LINE2:$probe#{$color_string}:\"$probe\" \
     VDEF:{$probe}max={$probe},MAXIMUM \
     GPRINT:{$probe}max:\"Max\:  %5.2lf°F\" \
     VDEF:{$probe}min={$probe},MINIMUM \
@@ -64,9 +68,8 @@ foreach ($config['temperature_probes'] as $probe_data) {
     VDEF:{$probe}cur={$probe},LAST \
     GPRINT:{$probe}cur:\"Cur\:  %5.2lf°F\l\" \
     \\\n";
-  $color = $color << 12;
 }
-$rrd_graph .= implode(" \\\n  ", $vrules);
+$rrd_graph .= implode(" \\\n ", $rrd_defs)." \\\n".implode(" \\\n  ", $vrules);
 
 if ($show_cmd) {
   header('Content-Type: plain/text');
