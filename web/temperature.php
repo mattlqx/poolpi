@@ -4,6 +4,10 @@ function get_sun_data($datestamp) {
   return json_decode(exec("./sunrise.py $datestamp"));
 }
 
+function get_config() {
+  return json_decode(exec("./dump_config.py"), true);
+}
+
 // Bail if etag matches (of same minute)
 $etag = md5(time() - time() % 60);
 if (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
@@ -42,25 +46,26 @@ if ($lookback <= 3600000) {
 }
 
 // Graphing
+$config = get_config();
 $tmpfile = tempnam("/tmp", "pooltemp");
 $rrd_graph = "rrdtool graph $tmpfile -w 785 -h 240 -a PNG --slope-mode --start -$lookback --end $start --vertical-label \"temperature (°F)\" ";
-if (!$probe_only) {
-  $rrd_graph .= "  DEF:temp2=temperature.rrd:outdoor:AVERAGE LINE2:temp2#ff0000:\"outside\" \
-  VDEF:outsidemax=temp2,MAXIMUM \
-  GPRINT:outsidemax:\"Max\:  %5.2lf°F\" \
-  VDEF:outsidemin=temp2,MINIMUM \
-  GPRINT:outsidemin:\"Min\:  %5.2lf°F\" \
-  VDEF:outsidecur=temp2,LAST \
-  GPRINT:outsidecur:\"Cur\:  %5.2lf°F\l\" \
-\\\n";
+$color = 0xff;
+foreach ($config['temperature_probes'] as $probe_data) {
+  $probe = array_keys($probe_data)[0];
+  if ($probe_only && $probe != 'probe') {
+    continue;
+  }
+  $color_string = sprintf("%06x", $color);
+  $rrd_graph .= "  DEF:$probe=temperature.rrd:$probe:AVERAGE LINE2:$probe#{$color_string}:\"$probe\" \
+    VDEF:{$probe}max={$probe},MAXIMUM \
+    GPRINT:{$probe}max:\"Max\:  %5.2lf°F\" \
+    VDEF:{$probe}min={$probe},MINIMUM \
+    GPRINT:{$probe}min:\"Min\:  %5.2lf°F\" \
+    VDEF:{$probe}cur={$probe},LAST \
+    GPRINT:{$probe}cur:\"Cur\:  %5.2lf°F\l\" \
+    \\\n";
+  $color = $color << 12;
 }
-$rrd_graph .= "  DEF:temp=temperature.rrd:probe:AVERAGE LINE2:temp#0000ff:\"probe\" \
-  VDEF:probemax=temp,MAXIMUM \
-  GPRINT:probemax:\"  Max\:  %5.2lf°F\" \
-  VDEF:probemin=temp,MINIMUM \
-  GPRINT:probemin:\"Min\:  %5.2lf°F\" \
-  VDEF:probecur=temp,LAST \
-  GPRINT:probecur:\"Cur\:  %5.2lf°F\l\" \\\n";
 $rrd_graph .= implode(" \\\n  ", $vrules);
 
 if ($show_cmd) {

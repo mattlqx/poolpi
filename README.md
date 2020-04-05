@@ -23,16 +23,22 @@ A simple config so I don't have to put my home location into the public repo. It
 
 ```
 from pytz import timezone
+import collections
 
 # Location information
 longitude = -5;
 latitude = 22;
 localtz = timezone('UTC')
-weather_station = 'KNYNEWYO256'
 webpath = 'https://mywebserver.com/poolpi'
+temperature_probes = collections.OrderedDict()
+temperature_probes['probe'] = '28-011620f667ee'
+temperature_probes['outdoor'] = '28-011620f667ff'
 ```
 
-Weather station is an identifier from wunderground.com.
+**NOTE**: Weather Underground has shutdown. As a result, I've removed outdoor temperature scraping. Instead of
+having to deal with an external service, I've decided to just go with another temperature probe. So I've added
+that to the config above. It's an ordered dictionary with the key being the name of the rrd gauge and value being
+the serial number of the probe. The ordering is important for exporting the structure between Python and PHP.
 
 ### RRD
 

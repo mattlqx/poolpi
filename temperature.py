@@ -6,19 +6,26 @@
 import sys
 
 class TemperatureProbe:
-    temp_probe_serial = '28-011620f667ee'
     cpu_device = '/sys/class/thermal/thermal_zone0/temp'
-    probe_device = '/sys/bus/w1/devices/{serial}/w1_slave'.format(serial=temp_probe_serial)
 
-    def __init__(self, device=probe_device):
-        self.device = device
+    @classmethod
+    def device_for_serial(cls, serial):
+        return '/sys/bus/w1/devices/{serial}/w1_slave'.format(serial=serial)
+
+    @classmethod
+    def from_serial(cls, serial):
+        return TemperatureProbe(device=cls.device_for_serial(serial))
+
+    def __init__(self, device=None):
+	if device is None:
+            device = TemperatureProbe.cpu_device
 
         # Open temperature probe device
-        with open(self.device) as tfile:
+        with open(device) as tfile:
             text = tfile.read()
 
         # Parse the data
-        if self.device == self.cpu_device:
+        if device == self.cpu_device:
             temperature_data = text
         else:
             secondline = text.split('\n')[1]
@@ -36,8 +43,8 @@ class TemperatureProbe:
         return '{0:.2f} degrees F'.format(self.fahrenheit())
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'cpu':
-        probe = TemperatureProbe(device=TemperatureProbe.cpu_device)
+    if sys.argv[1] == 'cpu':
+        device = TemperatureProbe.cpu_device
     else:
-        probe = TemperatureProbe()
-    print probe
+        device = TemperatureProbe.device_for_serial(sys.argv[1])
+    print TemperatureProbe(device=device)
